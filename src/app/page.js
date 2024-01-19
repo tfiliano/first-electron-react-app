@@ -4,9 +4,6 @@ import Image from "next/image";
 import { useState } from "react";
 
 
-
-
-
 function Square({value, onSquareClick}) {
   return (
     <button className="square p-2 max-w-sm mx-auto bg-white shadow-lg flex flex-col items-center text-4xl text-black text-center font-medium border-solid border-2 w-16 h-16" onClick={onSquareClick}>
@@ -93,7 +90,7 @@ export default function Game() {
   })
 
   return (
-    <div className="game">
+    <div className="game h-lvh flex flex-col items-center justify-center">
       <div className="game-board"> 
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
       </div>
