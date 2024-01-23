@@ -46,11 +46,39 @@ function loadEventHandle() {
         
         return "processed " + args
     })
-    ipcMain.on("mhlPreProcess:streamData", async (event, msg) =>{
-
+    ipcMain.on("mhlPreProcess:py", async (event, msg) =>{
+        console.log("received from the UI: ", msg)
+        const [replyPort] = event.ports
         const params = {
             cmd: "python",
             file: path.resolve(cwd(), "server", "scripts", "playground.py"), 
+            args: [],
+            id: "123",
+            stream: true,
+            onData: (data) => {
+                replyPort.postMessage(data)    
+            },
+            onFinish: () => {
+                replyPort.close()        
+            }
+        } 
+        childProcessHandler.enqueue(params)
+
+
+        // const [replyPort] = event.ports
+        // for( let i = 0; i < 30; i++ ) {
+        //     replyPort.postMessage(msg)
+        // }
+
+
+        // replyPort.close()
+    })
+    ipcMain.on("mhlPreProcess:js", async (event, msg) =>{
+        console.log("received from the UI: ", msg)
+        const [replyPort] = event.ports
+        const params = {
+            cmd: "node",
+            file: path.resolve(cwd(), "server", "scripts", "createFolderAndFiles.js"), 
             args: [],
             id: "123",
             stream: true,

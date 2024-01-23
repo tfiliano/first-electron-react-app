@@ -3,18 +3,30 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 const mhlPreProcess = {
   script1: (args) => ipcRenderer.invoke("mhlPreProcess:script1", args),
-  streamData: (args, callback) => {
+  executePython: (args, callback) => {
     const { port1, port2 } = new MessageChannel()
     
     ipcRenderer.postMessage(
-      "mhlPreProcess:streamData", 
+      "mhlPreProcess:py", 
       args,
       [port2]
     );
 
     port1.onmessage = (event) => { callback(event.data) }
     port1.onclose = () => { console.log("stream ended") }
-  }
+  },
+  executeJS: (args, callback) => {
+    const { port1, port2 } = new MessageChannel()
+    
+    ipcRenderer.postMessage(
+      "mhlPreProcess:js", 
+      args,
+      [port2]
+    );
+
+    port1.onmessage = (event) => { callback(event.data) }
+    port1.onclose = () => { console.log("stream ended") }
+  },
 }
 
 const mhlProcess = {

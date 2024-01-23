@@ -10,12 +10,13 @@ class ChildProcessHandler {
     }
 
     enqueue(params) {
+        console.log(params)
         this.processQueue.push(params);
         this.childProcessList.set(params.id, true);
     }
 
     executeProcess(task, callback) {
-        const { cmd, file, args, id, onFinish } = task;
+        const { cmd, file, args, id, onData, onFinish } = task;
 
         const child = spawn(cmd, [file, ...args]);
         let dataBuffer;
@@ -29,9 +30,14 @@ class ChildProcessHandler {
             
             if (onFinish && typeof onFinish == "function") onFinish(dataBuffer);
         })
+        child.on("error", (error) => {
+            console.log("process errored! ", { error });
+        })
 
         child.stdout.on("data", async (data) => {
             dataBuffer += data.toString();
+
+            if (onData && typeof onData == "function") onData(data.toString());
             console.log("send data to UI: ", data.toString());
         })
         child.stdout.on("error", async (data) => {
